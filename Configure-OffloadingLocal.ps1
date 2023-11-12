@@ -13,10 +13,11 @@ function Install-Software {
 
 # Copy installation files to a local directory
 $sourceFolder = "C:\Temp\InstallerSource"
+# $sourceFolder = "\\whatever\network\path"
 $destinationFolder = "C:\Temp\InstallFiles"
 
 Write-Host "Copying installation files to local directory..."
-Copy-Item -Path $sourceFolder -Destination $destinationFolder -Recurse
+Copy-Item -Path $sourceFolder\* -Destination $destinationFolder -Recurse
 Write-Host "File copy completed."
 
 # Install Remote Desktop client
