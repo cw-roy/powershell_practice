@@ -12,8 +12,8 @@ function Install-Software {
 }
 
 # Copy installation files to a local directory
-$sourceFolder = "\\vmkip-danpmmsc\support$\Techs\Tech_name\offload_script_files"
-$destinationFolder = "C:\Temp\Installers"
+$sourceFolder = "C:\Temp\InstallerSource"
+$destinationFolder = "C:\Temp\InstallFiles"
 
 Write-Host "Copying installation files to local directory..."
 Copy-Item -Path $sourceFolder -Destination $destinationFolder -Recurse

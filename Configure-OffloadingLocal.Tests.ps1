@@ -1,4 +1,4 @@
-# Execute test: "Invoke-Pester .\Configure-OffloadingLocal.Tests.ps1"
+# Execute test: "Invoke-Pester -Script .\Configure-OffloadingLocal.ps1 -PassThru | Out-File -FilePath "PesterLog.txt""
 
 Describe "Configure-OffloadingLocal.ps1" {
     $ScriptPath = (Resolve-Path .\Configure-OffloadingLocal.ps1).Path
