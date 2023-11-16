@@ -1,4 +1,5 @@
 # Script name: Configure-OffloadingLocal.ps1
+
 # Function to install software and edit registry
 function Install-Software {
     param (
@@ -13,16 +14,11 @@ function Install-Software {
 
 # Copy installation files to a local directory
 $sourceFolder = "C:\Temp\InstallerSource"
-# $sourceFolder = "\\whatever\network\path"
 $destinationFolder = "C:\Temp\InstallFiles"
 
 Write-Host "Copying installation files to local directory..."
 Copy-Item -Path $sourceFolder\* -Destination $destinationFolder -Recurse
 Write-Host "File copy completed."
-
-# Install Remote Desktop client
-$rdpInstaller = Join-Path $destinationFolder "RemoteDesktop_1.2.4763.0_x64.msi"
-Install-Software -installerPath "msiexec.exe" -arguments "/i $rdpInstaller /qn"
 
 # Update registry for insider releases (run as Administrator)
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -32,6 +28,12 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     return
 }
 
+# Install Remote Desktop client with administrative privileges
+$rdpInstaller = Join-Path $destinationFolder "RemoteDesktop_1.2.4763.0_x64.msi"
+$installArguments = "/i $rdpInstaller /qn"
+Install-Software -installerPath "msiexec.exe" -arguments $installArguments
+
+# Continue with other tasks
 $insiderRegistryPath = "HKLM:\SOFTWARE\Microsoft\MSRDC\Policies"
 $insiderPropertyName = "ReleaseRing"
 $insiderPropertyValue = "insider"
@@ -41,6 +43,9 @@ Write-Host "Enabling insider releases..."
 New-Item -Path $insiderRegistryPath -Force
 New-ItemProperty -Path $insiderRegistryPath -Name $insiderPropertyName -PropertyType String -Value $insiderPropertyValue -Force
 Write-Host "Insider releases enabled."
+
+# The rest of your script...
+
 
 # Update registry for call redirection (run as logged-in user)
 # No need to check for elevation as this part should be run as the user
