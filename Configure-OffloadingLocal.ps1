@@ -21,7 +21,7 @@ Copy-Item -Path $sourceFolder\* -Destination $destinationFolder -Recurse
 Write-Host "File copy completed."
 
 # Install Remote Desktop client
-$rdpInstaller = Join-Path $destinationFolder "RemoteDesktopInstaller.msi"
+$rdpInstaller = Join-Path $destinationFolder "RemoteDesktop_1.2.4763.0_x64.msi"
 Install-Software -installerPath "msiexec.exe" -arguments "/i $rdpInstaller /qn"
 
 # Update registry for insider releases (run as Administrator)
