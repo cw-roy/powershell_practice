@@ -50,11 +50,10 @@ Write-Host "`nRemoving insider releases registry entries..."
 Remove-Item -Path $insiderRegistryPath -Recurse -Force
 Write-Host "Insider releases registry entries removed."
 
-# Uninstall Remote Desktop client (requires admin rights)
+# Uninstall Remote Desktop client
 $rdpInstallerPath = "C:\Temp\InstallFiles\RemoteDesktop_1.2.4763.0_x64.msi"
 $uninstallArguments = "/x $rdpInstallerPath /quiet"
 
-# Uninstall Remote Desktop client
 Write-Host "`nUninstalling Remote Desktop client..."
 Start-Process -FilePath "msiexec.exe" -ArgumentList $uninstallArguments -Wait
 Write-Host "Remote Desktop client uninstallation completed."

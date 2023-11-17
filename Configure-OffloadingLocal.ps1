@@ -50,7 +50,7 @@ Write-Host "`nInstalling Remote Desktop client..."
 Start-Process -FilePath "msiexec.exe" -ArgumentList $rdpInstallArguments -Wait
 Write-Host "Remote Desktop client installation completed."
 
-# Registry edits after software installation (admin)
+# Registry edits after software installation (Local Machine)
 $insiderRegistryPath = "HKLM:\SOFTWARE\Microsoft\MSRDC\Policies"
 $insiderPropertyName = "ReleaseRing"
 $insiderPropertyValue = "insider"
