@@ -11,7 +11,8 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Announcement
-Write-Host "-----Multimedia redirect for Twilio-----" -ForegroundColor Yellow
+Write-Host "`n-----This is to be run on the local machine-----" -ForegroundColor Red
+Write-Host "`n-----Local Multimedia redirect for Twilio-----" -ForegroundColor Yellow
 
 # Prompt user to press any key to start or X to cancel
 Write-Host "`nPress any key to start or X to cancel"
