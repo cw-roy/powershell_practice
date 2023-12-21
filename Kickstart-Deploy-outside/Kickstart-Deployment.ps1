@@ -17,7 +17,7 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Get the current machine name
-$machineName = $ENV:COMPUTERNAME
+$machineName = $env:COMPUTERNAME
 
 Write-Host "`nKickstart Deployment for $machineName" -ForegroundColor Yellow
 
@@ -27,7 +27,8 @@ try {
     Write-Host "`nRestarting SMS Agent Host (CcmExec) service... "
     Restart-Service -Name "CcmExec" -Force -ErrorAction Stop
     Write-Host "Service 'CcmExec' restarted successfully."
-} catch {
+}
+catch {
     Write-Host "Failed to restart service 'CcmExec'. $_" -ForegroundColor Red
 }
 
@@ -35,16 +36,17 @@ Start-Sleep -Seconds 2
 
 # Delete Files
 Write-Host "`nDeleting 'TSasUser' files..."
-# During testing, use test files:
+# During testing, use test file names:
 $filesToDelete = @("C:\temp\Testfile1.txt", "C:\temp\Testfile2.txt", "C:\temp\Testfile3.log")
-# In production, uncomment next line:
+# In production, use the actual file names:
 # $filesToDelete = @("C:\temp\TSasUserSuccess.txt"; "C:\temp\TSasUserFail.txt"; "C:\temp\Execute-TSasUser.log")
 
 foreach ($file in $filesToDelete) {
     if (Test-Path $file) {
         Remove-Item $file -Force
         Write-Host "    Deleted file: $file"
-    } else {
+    }
+    else {
         Write-Host "    File not found: $file"
     }
 }
@@ -53,17 +55,25 @@ Start-Sleep -Seconds 2
 
 # Run Configuration Manager Actions
 
-# Application Deployment Evaluation Cycle
-Write-Host = "`nRunning Application Deployment Evaluation Cycle..."
-$appDeployTrigger = "{00000000-0000-0000-0000-000000000121}"
-Invoke-WmiMethod -ComputerName $machineName -Namespace root\ccm -Class SMS_CLIENT TriggerSchedule $appDeployTrigger
+$TriggerIDs = {
+    $SCCMActions = @("{00000000-0000-0000-0000-000000000026}", #User Policy Retrieval
+        "{00000000-0000-0000-0000-000000000027}", #User Policy Evaluation
+        "{00000000-0000-0000-0000-000000000121}") #Application Deployment
 
-Start-Sleep -Seconds 10
+    foreach ($action in $SCCMActions) {
+        $result = Invoke-WMIMethod -Namespace root\ccm -Class SMS_CLIENT -Name TriggerSchedule $action
 
-# User Policy Evaluation Cycle
-Write-Host "`nRunning User Policy Evaluation Cycle..."
-$userPolicyEvalTrigger = "{00000000-0000-0000-0000-000000000027}"
-Invoke-WmiMethod -ComputerName $machineName -Namespace root\ccm -Class SMS_CLIENT TriggerSchedule $userPolicyEvalTrigger
+        # Check the result object for success or failure
+        if ($result.ReturnValue -eq 0) {
+            Write-Host "Action triggered successfully. Execution may take several minutes."
+        }
+        else {
+            Write-Host "Failed to trigger action. ReturnValue: $($result.ReturnValue)"
+        }
+    }
+}
+
+Invoke-Command -ScriptBlock $TriggerIDs
 
 Start-Sleep -Seconds 10
 
